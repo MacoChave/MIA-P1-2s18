@@ -55,8 +55,12 @@ int main(int argc, char const *argv[])
         strcpy(string, readLine());
 
         if (strlen(string) > 0 && isalpha(string[0]))
+        {
+            if (strncmp(string, "exit", sizeof(char) * 4) == 0)
+                break;
             printf("COMANDO -> %s", string);
-            
+        }
+
         printf("\n*******************************\n");
     } while (!exit);
     
