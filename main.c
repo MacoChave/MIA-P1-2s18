@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
+
+#include "interpreter/compiler.c"
 
 char * readLine()
 {
@@ -58,7 +59,7 @@ int main(int argc, char const *argv[])
         {
             if (strncmp(string, "exit", sizeof(char) * 4) == 0)
                 break;
-            printf("COMANDO -> %s", string);
+            automaton(string);
         }
 
         printf("\n*******************************\n");
