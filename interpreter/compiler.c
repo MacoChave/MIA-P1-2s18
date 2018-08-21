@@ -1,5 +1,5 @@
 #ifndef COMPILER_H_INCLUDED
-#define COMPILER_H_INCLUDEDMkdisk -path->/home/user/Disco2.dsk -Unit->K -size->3000
+#define COMPILER_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,14 +58,9 @@ char * getValue(char * temp, int * type_value)
     char * value = (char *)malloc(strlen(temp));
     memset(value, 0, strlen(temp));
     strcpy(value, temp);
-    
+
     if (*type_value != 0)
         *type_value = (strlen(temp) > 1) ? 2 : *type_value;
-    
-    if (value[strlen(value) - 1] == '\n')
-        value[strlen(value) - 1] = '\0';
-    if (value[strlen(value) - 1] == '\r')
-        value[strlen(value) - 1] = '\0';
 
     return value;
 }
@@ -141,14 +136,18 @@ void automaton(char * line)
         {
             if (*s == '\"')
                 quotation_marks *= -1;
-            
+
             if (*s != ' ')
             {
-                if (*s != '\n' || *s != '\r')
+                sprintf(temp, "%s%c", temp, *s);
+
+                if (temp[strlen(temp) - 1] == 10)
                 {
-                    sprintf(temp, "%s%c", temp, *s);
-                    type_value = (isdigit(*s)) ? 0 : 1;
+                    temp[strlen(temp) - 1] = '\0';
+                    break;
                 }
+                else
+                    type_value = (isdigit(*s)) ? 0 : 1;
             }
             if (*s == ' ')
             {
@@ -171,8 +170,8 @@ void automaton(char * line)
     if (strlen(temp) > 0)
     {
         value = getValue(temp, &type_value);
-        memset(temp, 0, TEMPSZ);
         printf("Recognized value: %s, data type: %d \n", value, type_value);
+        memset(temp, 0, TEMPSZ);
     }
 
     free(temp);
