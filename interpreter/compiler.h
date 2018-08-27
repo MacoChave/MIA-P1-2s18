@@ -6,10 +6,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "../struct/mlist.h"
+#include "../struct/parameter.h"
+
 /*
- * Obtener tipo de comando
+ * OBTENER TIPO DE COMANDO
  */
-int getCommandType(char * name)
+int getCommandType (char * name)
 {
     if (strcasecmp(name, "exec") == 0)
         return 0;
@@ -29,7 +32,10 @@ int getCommandType(char * name)
         return -1;
 }
 
-int validateParameter(char * param)
+/*
+ * OBTENER TIPO DE PARAMETRO
+*/
+int validateParameter (char * param)
 {
     if (strcasecmp(param, "size") == 0)
         return 0;
@@ -53,7 +59,7 @@ int validateParameter(char * param)
         return -1;
 }
 
-char * getValue(char * temp, int * type_value)
+char * getValue (char * temp, int * type_value)
 {
     char * value = (char *)malloc(strlen(temp));
     memset(value, 0, strlen(temp));
@@ -65,11 +71,13 @@ char * getValue(char * temp, int * type_value)
     return value;
 }
 
-void automaton(char * line)
+MList * automaton (char * line, int * cmd_type)
 {
     int type;
     int param;
     char * value;
+
+    MList * parameters = newMList();
 
     size_t TEMPSZ = sizeof(char) * 125;
     char * temp = (char *)malloc(TEMPSZ);
@@ -95,8 +103,8 @@ void automaton(char * line)
             }
             else
             {
-                type = getCommandType(temp);
-                if (type >= 0)
+                *cmd_type = getCommandType(temp);
+                if (*cmd_type >= 0)
                     printf("Recognized command: %s\n", temp);
                 else
                 {
@@ -157,6 +165,8 @@ void automaton(char * line)
                 {
                     value = getValue(temp, &type_value);
                     memset(temp, 0, TEMPSZ);
+                    Parameter * parameter = new_Parameter(param, value, type_value);
+                    push_back(&parameters, parameter);
                     printf("Recognized value: %s, data type: %d \n", value, type_value);
                     s += 2;
                     step = 1;
@@ -170,17 +180,23 @@ void automaton(char * line)
     if (strlen(temp) > 0)
     {
         value = getValue(temp, &type_value);
+        Parameter * parameter = new_Parameter(param, value, type_value);
+        push_back(&parameters, parameter);
         printf("Recognized value: %s, data type: %d \n", value, type_value);
         memset(temp, 0, TEMPSZ);
     }
 
     free(temp);
     temp = NULL;
+
+    return parameters;
 }
 
-void analizeLine(char * line)
+void analizeLine (char * line)
 {
-    automaton(line);
+    int cmd_type = -1;
+    MList * parameters = automaton(line, &cmd_type);
+    clearMList(&parameters);
 }
 
 #endif // COMPILER_H_INCLUDED

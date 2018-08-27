@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "interpreter/compiler.c"
+#include "interpreter/compiler.h"
 
-char * readLine()
+char * readLine ()
 {
     char * line = (char *)malloc(sizeof(char) * 200);
     char * linep = line;
@@ -44,7 +44,7 @@ char * readLine()
     
 }
 
-int main(int argc, char const *argv[])
+int main (int argc, char const *argv[])
 {
     char string[200];
     int exit = 0;
@@ -59,8 +59,10 @@ int main(int argc, char const *argv[])
         {
             if (strncmp(string, "exit", sizeof(char) * 4) == 0)
                 break;
-            automaton(string);
+            analizeLine(string);
         }
+        else
+            break;
 
         printf("\n*******************************\n");
     } while (!exit);
