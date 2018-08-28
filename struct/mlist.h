@@ -76,6 +76,8 @@ void * pop_front (MList ** list)
     {
         MListNode * temp = (*list)->first;
         (*list)->first = (*list)->first->next;
+        if ((*list)->first == NULL)
+            (*list)->last = NULL;
         (*list)->size--;
 
         void * result = temp->info;

@@ -41,7 +41,6 @@ char * readLine ()
 
     *line = '\0';
     return linep;
-    
 }
 
 int main (int argc, char const *argv[])
