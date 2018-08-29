@@ -65,6 +65,17 @@ int createDisk(char * filename, int size)
     return 1;    
 }
 
+int checkDisk(char * filename)
+{
+    FILE * file;
+
+    if ((file = fopen(filename, "rb")) == NULL)
+        return 0;
+
+    fclose(file);
+    return 1;
+}
+
 int updateMBR(char * filename, MBR * data)
 {
     FILE * file;
@@ -81,7 +92,7 @@ int updateMBR(char * filename, MBR * data)
 
 int deleteDisk(char * filename)
 {
-
+    return (remove(filename) == 0) ? 1 : 0;
 }
 
 int updateEBR(char * filename, EBR * data, int start)

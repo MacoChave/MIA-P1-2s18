@@ -87,6 +87,9 @@ void exec_mkdisk (MList * parameters)
         return;
     }
 
+    if (!checkDisk(filename))
+        perror("Ya existe un disco con el mismo nombre\n");
+
     if (createDisk(filename, size))
         printf("[i] Disco creado\n");
     else
