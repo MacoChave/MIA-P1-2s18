@@ -8,6 +8,7 @@
 
 #include "../struct/mlist.h"
 #include "../struct/parameter.h"
+#include "../command/cmdmkdisk.h"
 
 /* TIPO DE COMANDO */
 #define TC_EXEC 0
@@ -95,9 +96,6 @@ char * getValue (char * temp, int * type_value)
 
     if (*type_value != TD_INT)
         *type_value = (strlen(temp) > 1) ? TD_STRING : *type_value;
-    
-    if (value[strlen(value) - 1] == '\n')
-        value[strlen(value) - 1] = '\0';
 
     return value;
 }
@@ -126,6 +124,11 @@ MList * automaton (char * line, int * cmd_type)
     while(*s){
         if (*s == '#')
             break;
+        if (*s == '\n' || *s == '\r')
+        {
+            s++;
+            continue;
+        }
 
         if (step == 0)
         {
@@ -158,6 +161,11 @@ MList * automaton (char * line, int * cmd_type)
                 s++;
                 continue;
             }
+            else if (*s == '-' && strlen(temp) == 0)
+            {
+                s++;
+                continue;
+            }
             else
             {
                 param = validateParameter(temp);
@@ -166,30 +174,35 @@ MList * automaton (char * line, int * cmd_type)
                 else
                 {
                     printf("Unrecognizable param: %s\n", temp);
-                    type = -1;
+                    *cmd_type = -1;
                     break;
                 }
                 memset(temp, 0, TEMPSZ);
-                s += 2;
+                s++;
                 step = 2;
             }
         }
         else // step == 2
         {
+            if (*s == '>' && strlen(temp) == 0)
+            {
+                s++;
+                continue;
+            }
             if (*s == '\"')
+            {
                 quotation_marks *= -1;
+                s++;
+                continue;
+            }
 
             if (*s != ' ')
             {
-                sprintf(temp, "%s%c", temp, *s);
-
-                if (temp[strlen(temp) - 1] == 10)
+                if (*s != '\n' && *s != '\r')
                 {
-                    temp[strlen(temp) - 1] = '\0';
-                    break;
-                }
-                else
+                    sprintf(temp, "%s%c", temp, *s);
                     type_value = (isdigit(*s)) ? TD_INT : TD_CHAR;
+                }
             }
             if (*s == ' ')
             {
@@ -240,7 +253,7 @@ void execute (int cmd_type, MList * parameters)
     switch (cmd_type)
     {
         case TC_MKDISK:
-            printf("mkdisk\n");
+            exec_mkdisk(parameters);
             break;
         case TC_RMDISK:
             printf("rmdisk\n");

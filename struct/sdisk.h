@@ -68,6 +68,7 @@ Partition newPartition(int start)
     partition.part_start = start;
     partition.part_size = 0;
     memset(partition.part_name, 0, 16);
+    strcpy(partition.part_name, "free");
 
     return partition;
 }
@@ -75,7 +76,7 @@ Partition newPartition(int start)
 MBR newMBR(int size)
 {
     MBR mbr;
-    mbr.size = 0;
+    mbr.size = size;
     memset(mbr.mbr_fecha_creacion, 0, 16);
     strcpy(mbr.mbr_fecha_creacion, getCurrentDate());
     mbr.mbr_disk_signature = getRandom();
